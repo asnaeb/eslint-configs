@@ -1,5 +1,6 @@
 {
-  "name": "@asnaeb/eslint-configs",
+  "name": "@asn.aeb/eslint-configs",
+  "private": false,
   "version": "1.0.0",
   "description": "",
   "keywords": [],
