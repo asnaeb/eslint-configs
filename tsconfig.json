@@ -1,0 +1,13 @@
+{
+  "include": ["index.mjs"],
+  "compilerOptions": {
+    "lib": ["es2020"],
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

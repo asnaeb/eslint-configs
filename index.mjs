@@ -2,18 +2,21 @@
 
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import react from "eslint-plugin-react";
+import reactPlugin from "eslint-plugin-react";
+// @ts-ignore
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-const common = tseslint.config({
-  extends: [js.configs.recommended],
+/** @type {import("eslint").Linter.Config} */
+const common = {
+  files: ["**/*.{js,cjs,mjs,ts,jsx,tsx}"],
   plugins: {
     stylistic
   },
   rules: {
+    ...js.configs.recommended.rules,
     "stylistic/semi": ["error", "always"],
     "stylistic/indent": ["error", 2, {SwitchCase: 1}],
     "stylistic/quotes": ["error", "double"],
@@ -101,42 +104,45 @@ const common = tseslint.config({
     "operator-assignment": ["error", "always"],
     "prefer-const": "error"
   }
-});
+};
 
-const typescript = tseslint.config({
-  extends: [...tseslint.configs.recommended],
-  plugins: {
-    "@typescript-eslint": tseslint.plugin,
-  },
-  rules: {
-    "no-shadow": "off",
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-shadow": "error",
-    "@typescript-eslint/no-unused-vars": "error",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/prefer-for-of": "off"
+/** @type {Array<import("eslint").Linter.Config>} */
+const typescript = [
+  .../** @type {any} */(tseslint.configs.recommended),
+  {
+    files: ["**/*.{ts,tsx}"],
+    plugins: {
+      "@typescript-eslint": /** @type {any} */ (tseslint.plugin)
+    },
+    rules: {
+      "no-shadow": "off",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-shadow": "error",
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/prefer-for-of": "off"
+    }
   }
-});
+];
 
-const browserReact = tseslint.config({
-  files: ["src/**/*.{js,jsx,mjs,cjs,ts,tsx}", "public/*.js"],
-  ...react.configs.flat?.recommended,
-  ...react.configs.flat?.["jsx-runtime"],
+/** @type {import("eslint").Linter.Config} */
+const react = {
+  files: ["**/*.{jsx,tsx}"],
   languageOptions: {
-    ...react.configs.flat?.recommended.languageOptions,
-    ...react.configs.flat?.["jsx-runtime"].languageOptions,
+    ...reactPlugin.configs.flat?.recommended.languageOptions,
+    ...reactPlugin.configs.flat?.["jsx-runtime"].languageOptions,
     ecmaVersion: 2020,
     globals: globals.browser,
   },
   plugins: {
-    "react-hooks": /** @type {import('eslint').ESLint.Plugin} */ (reactHooks),
-    "react-refresh": reactRefresh,
-    react: /** @type {import('eslint').ESLint.Plugin} */ (react)
+    react: reactPlugin,
+    "react-hooks": reactHooks,
+    "react-refresh": reactRefresh
   },
   rules: {
-    .../** @type {Record<string, import("eslint").Linter.RuleEntry>} */ (react.configs.flat?.recommended.rules),
-    .../** @type {Record<string, import("eslint").Linter.RuleEntry>} */ (react.configs.flat?.["jsx-runtime"].rules),
-    .../** @type {Record<string, import("eslint").Linter.RuleEntry>} */ (reactHooks.configs.recommended.rules),
+    ...reactPlugin.configs.flat?.recommended.rules,
+    ...reactPlugin.configs.flat?.["jsx-runtime"].rules,
+    ...reactHooks.configs.recommended.rules,
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react-refresh/only-export-components": [
@@ -166,13 +172,14 @@ const browserReact = tseslint.config({
       }
     ],
   }
-});
+};
 
-const node = tseslint.config({
+/** @type {import("eslint").Linter.Config} */
+const node = {
   languageOptions: {
     globals: globals.node
   }
-});
+};
 
 
-export {common, typescript, browserReact, node};
+export {common, typescript, react, node};
